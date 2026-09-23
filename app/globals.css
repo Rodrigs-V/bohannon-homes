@@ -1,0 +1,421 @@
+@import "tailwindcss";
+
+/*
+ * ════════════════════════════════════════════════════════════════════════════
+ * BOHANNON DEVELOPMENT CORPORATION — design tokens
+ *
+ * PALETTE ORIGIN. The client has no brand guide. The crimson family below was
+ * sampled directly out of their own logo file (public/images/brand/logo.png,
+ * decoded pixel-by-pixel — not eyeballed off a screenshot):
+ *
+ *   #992327  brand         — SOURCED. The wordmark's ink; 25.2% of the logo's
+ *                            non-white pixels, by far the dominant value.
+ *   #7C001E  brand-deep    — SOURCED. The bottom of the house-mark's gradient.
+ *   #A7021A  brand-bright  — SOURCED. The top of that same gradient.
+ *
+ * Everything else is an ADDITION, chosen so the crimson stays the only
+ * saturated thing on the page. The neutrals are warm — a limestone/bone
+ * family rather than a cool grey — because every photograph the client owns
+ * is sunlit West Texas stucco, and a cool grey fights it.
+ *
+ *   #1A1714  ink           — added. Warm near-black. Body text and dark slabs.
+ *   #14110E  night         — added. One step deeper, for the full-bleed bands.
+ *   #6B625A  ink-muted     — added. Secondary text on light surfaces.
+ *   #C8C1B8  ink-inverse-muted — added. Secondary text on dark surfaces.
+ *   #FFFFFF  surface       — added.
+ *   #F7F4EF  surface-alt   — added. Bone, not grey.
+ *   #E2DCD3  hairline      — added. Rules and borders; decorative, never text.
+ *
+ * CONTRAST (computed from sRGB relative luminance, scratch script — not
+ * estimated). Every pair actually used on the page:
+ *
+ *   ink               on surface       17.85  AAA
+ *   ink               on surface-alt   16.27  AAA
+ *   ink-muted         on surface        5.97  AA
+ *   ink-muted         on surface-alt    5.44  AA
+ *   brand             on surface        8.00  AAA
+ *   brand             on surface-alt    7.29  AAA
+ *   brand-deep        on surface       11.20  AAA
+ *   brand-deep        on surface-alt   10.20  AAA
+ *   ink-inverse       on brand          8.00  AAA   (white text on crimson)
+ *   ink-inverse       on brand-deep    11.20  AAA
+ *   ink-inverse       on ink           17.85  AAA
+ *   ink-inverse       on night         18.81  AAA
+ *   ink-inverse-muted on ink           10.01  AAA
+ *   ink-inverse-muted on night         10.55  AAA
+ *
+ * ⚠️ brand-bright on night computes 2.39 — FAIL. That is why the crimson is
+ * never type on a dark surface. On dark it appears only as a FILL (a button,
+ * a rule, the stat underline); the type on top of it is white, at 8.00+.
+ * ════════════════════════════════════════════════════════════════════════════
+ */
+
+@theme inline {
+  /* ── Font roles ───────────────────────────────────────────────────────────
+     TWO FAMILIES, sharply divided by job.
+
+     Instrument Serif carries every number and every display headline. It is a
+     high-contrast editorial serif with a genuinely large optical size — it is
+     built to be set at 120px, which is exactly what the portfolio figures do.
+     A 45-year-old firm whose whole pitch is 14,000 units and nine states
+     should let the figures be the design.
+
+     Inter Tight carries everything else: labels, body, nav, addresses. Its
+     tighter default tracking holds a caption at 13px without looking spindly,
+     and it stays completely out of the serif's way. */
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display-face);
+
+  /* ── Brand (sampled from the client's logo) ─────────────────────────────── */
+  --color-brand: #992327;
+  --color-brand-deep: #7c001e;
+  --color-brand-bright: #a7021a;
+
+  /* ── Ink ────────────────────────────────────────────────────────────────── */
+  --color-ink: #1a1714;
+  --color-night: #14110e;
+  --color-ink-muted: #6b625a;
+  --color-ink-inverse: #ffffff;
+  --color-ink-inverse-muted: #c8c1b8;
+
+  /* ── Surfaces ───────────────────────────────────────────────────────────── */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7f4ef;
+  --color-hairline: #e2dcd3;
+
+  /* ── Shape. Effectively square.
+     The logo's house-mark is built from hard-cornered rectangles with one
+     chamfered roofline. Rounded cards would contradict it, and a construction
+     firm is not a consumer app. 3px is a cut edge, not a pill. */
+  --radius-card: 3px;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #1a1714;
+  color-scheme: light;
+
+  /* The header's height, in one place: the hero pads for it and anchored
+     sections scroll-margin past it. */
+  --bar: 5.5rem;
+}
+
+@media (max-width: 47.99rem) {
+  :root {
+    --bar: 4.25rem;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--background);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body), ui-sans-serif, system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+}
+
+/* On dark bands the crimson ring disappears; use the bone instead. */
+.on-dark :focus-visible {
+  outline-color: var(--color-ink-inverse);
+}
+
+/* ── Page gutters ─────────────────────────────────────────────────────────── */
+.shell {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 82rem;
+  padding-inline: clamp(1.25rem, 5vw, 4.5rem);
+}
+
+.shell-wide {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 96rem;
+  padding-inline: clamp(1.25rem, 5vw, 4.5rem);
+}
+
+/* ── Typographic roles ────────────────────────────────────────────────────── */
+
+/* Display. Instrument Serif, normal weight — it has only one — so the size
+   does all the work. Tracking goes slightly negative as it scales up. */
+.t-display {
+  font-family: var(--font-display-face), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.t-display-md {
+  font-family: var(--font-display-face), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+/* The portfolio figures. Same serif, lining figures, set enormous. */
+.t-figure {
+  font-family: var(--font-display-face), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-variant-numeric: lining-nums;
+  letter-spacing: -0.03em;
+  line-height: 0.85;
+}
+
+/* Eyebrows, field labels, table headers. Inter Tight, small, tracked out —
+   the one place uppercase is allowed, because it reads as a rule rather than
+   as shouting at this size. */
+.t-label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.t-prose {
+  max-width: 62ch;
+}
+
+.t-prose-tight {
+  max-width: 48ch;
+}
+
+/* ── The rule that opens a section ────────────────────────────────────────
+   A 2px crimson rule, 2.5rem wide, sitting above every eyebrow. It is the
+   single repeated ornament on the page, and it is the same rule that
+   underlines the figures. */
+.rule {
+  display: block;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--color-brand);
+}
+
+.rule-light {
+  background: var(--color-ink-inverse);
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-card);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0.8rem 1.5rem;
+  white-space: nowrap;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+/* Crimson fill, white text — 8.00:1. One per screen. */
+.btn-brand {
+  background: var(--color-brand);
+  color: var(--color-ink-inverse);
+}
+
+.btn-brand:hover {
+  background: var(--color-brand-deep);
+}
+
+.btn-line {
+  border: 1px solid var(--color-hairline);
+  color: var(--color-ink);
+  background: transparent;
+}
+
+.btn-line:hover {
+  border-color: var(--color-ink);
+}
+
+/* On a photograph or a night band. */
+.btn-line-light {
+  border: 1px solid rgb(255 255 255 / 0.45);
+  color: var(--color-ink-inverse);
+  background: rgb(255 255 255 / 0.06);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.btn-line-light:hover {
+  border-color: var(--color-ink-inverse);
+  background: rgb(255 255 255 / 0.14);
+}
+
+/*
+ * ── Header links ──────────────────────────────────────────────────────────
+ * The bar sits on the hero photograph until it goes solid, so links carry a
+ * faint shadow rather than a plate. The crimson underline grows from the
+ * left on hover — the same 2px crimson as .rule.
+ */
+.nav-link {
+  position: relative;
+  display: inline-block;
+  padding-block: 0.4rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  transition: color 180ms ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 220ms cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-on-photo {
+  color: var(--color-ink-inverse);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+}
+
+.nav-on-solid {
+  color: var(--color-ink-inverse);
+}
+
+/*
+ * ── Hero photograph cross-fade ────────────────────────────────────────────
+ * Every frame is a real photograph of a real Bohannon community, and each is
+ * captioned with that community's name while it is on screen. The slow scale
+ * is a 12s drift, not a zoom — it should read as the page breathing.
+ */
+.hero-frame {
+  transition: opacity 1400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-frame-active img {
+  animation: hero-drift 14s ease-out both;
+}
+
+@keyframes hero-drift {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* First paint: the headline and its furniture rise once. Nothing loops. */
+.rise {
+  animation: rise 900ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Community card ───────────────────────────────────────────────────────── */
+.card-frame {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--color-surface-alt);
+}
+
+.card-frame img {
+  transition: transform 700ms cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .card:hover .card-frame img {
+    transform: scale(1.04);
+  }
+}
+
+/* ── The figure rows ──────────────────────────────────────────────────────
+   Hairline-separated rows on the night band, the figure set huge on the left
+   and its gloss on the right. Modelled on an editorial stat stack rather than
+   the four-across "icon over number" card row every corporate site uses. */
+.figure-row {
+  border-top: 1px solid rgb(255 255 255 / 0.16);
+}
+
+.figure-row:last-child {
+  border-bottom: 1px solid rgb(255 255 255 / 0.16);
+}
+
+/*
+ * Unverified-content marker. Any fact the client does not publish renders
+ * through this, never as invented copy. Find every one of them with:
+ *   grep -rn "TO BE CONFIRMED\|PLACEHOLDER\|unconfirmed" app components lib
+ */
+.unconfirmed {
+  display: inline-block;
+  border: 1px dashed var(--color-hairline);
+  border-radius: var(--radius-card);
+  background: var(--color-surface-alt);
+  color: var(--color-ink-muted);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.unconfirmed-on-dark {
+  border-color: rgb(255 255 255 / 0.28);
+  background: rgb(255 255 255 / 0.06);
+  color: var(--color-ink-inverse-muted);
+}
+
+/* Anchored sections clear the fixed bar. */
+[id] {
+  scroll-margin-top: calc(var(--bar) + 1rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .card:hover .card-frame img {
+    transform: none;
+  }
+}
