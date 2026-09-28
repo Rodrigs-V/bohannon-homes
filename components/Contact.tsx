@@ -1,13 +1,16 @@
+import ContactForm from "@/components/ContactForm";
 import SectionHeading from "@/components/SectionHeading";
 import { addressLine, company } from "@/lib/company";
-import { directory } from "@/lib/leadership";
 
 /**
- * CONTACT — the office, and the staff directory the client already publishes.
+ * CONTACT — the office line, address and hours on the left; a quote /
+ * inquiry form on the right (components/ContactForm.tsx — not connected to
+ * an inbox yet, and says so). The staff directory has its own page
+ * (app/directory/page.tsx), linked from the footer; careers is a footer link.
  *
- * NO FORM. The client runs no form endpoint that this site could post to, and
- * a form that silently goes nowhere is worse than no form. Everything here is
- * a `tel:` or a `mailto:` that works on first tap.
+ * THE FORM HAS NO BACKEND. The client runs no form endpoint, and a form
+ * that silently goes nowhere is worse than no form — so ContactForm says
+ * plainly that it isn't connected until `company.inquiryEmail` is set.
  *
  * PLACEHOLDER, DELIBERATE. The corporate office publishes no hours anywhere —
  * not on the site, not in the API behind it. That renders as a visible marked
@@ -38,7 +41,7 @@ export default function Contact() {
               intro="Development, third-party general contracting, or management of a property you already own — the fastest route is the office line."
             />
 
-            <div className="mt-10 grid gap-8">
+            <div className="mt-12 grid gap-x-10 gap-y-9 sm:grid-cols-2">
               <div>
                 <p className="t-label text-ink-inverse-muted">Call</p>
                 <a href={company.phoneHref} className="t-display-md mt-2 block text-4xl">
@@ -66,7 +69,7 @@ export default function Contact() {
                 </a>
               </div>
 
-              <div>
+              <div className="sm:col-span-2">
                 <p className="t-label text-ink-inverse-muted">Office hours</p>
                 <p className="unconfirmed unconfirmed-on-dark mt-2">
                   {company.officeHoursNote} — the company does not publish
@@ -74,43 +77,11 @@ export default function Contact() {
                   their own; see each community.
                 </p>
               </div>
-
-              <div>
-                <p className="t-label text-ink-inverse-muted">Careers</p>
-                <a
-                  href={company.careersFormHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn btn-line-light mt-3"
-                >
-                  Employment application (PDF) ↗
-                </a>
-              </div>
             </div>
           </div>
 
-          {/* The staff directory, exactly as the client publishes it. */}
-          <div>
-            <p className="t-label text-ink-inverse-muted">Directory</p>
-            <ul className="mt-5">
-              {directory.map((person) => (
-                <li
-                  key={person.email}
-                  className="grid gap-1 border-t border-white/14 py-4 last:border-b sm:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] sm:items-baseline sm:gap-6"
-                >
-                  <div>
-                    <p className="font-medium">{person.name}</p>
-                    <p className="text-[0.8125rem] text-ink-inverse-muted">{person.title}</p>
-                  </div>
-                  <a
-                    href={`mailto:${person.email}`}
-                    className="break-all text-[0.875rem] text-ink-inverse-muted underline-offset-4 hover:text-ink-inverse hover:underline"
-                  >
-                    {person.email}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          <div className="md:pt-16">
+            <ContactForm />
           </div>
         </div>
       </div>

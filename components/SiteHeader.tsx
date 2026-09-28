@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { company } from "@/lib/company";
@@ -28,10 +30,13 @@ import { navLeft, navLinks, navRight } from "@/lib/nav";
  *
  * Below `md` the links collapse into the overlay, but the PHONE NUMBER stays
  * in the bar at every width — it is the primary action for a firm whose whole
- * contact page is a phone number and a staff directory.
+ * contact page is a phone number.
  */
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
+  // Only the homepage has a hero photograph under the bar; every other
+  // route starts on a light surface, so the bar is solid there from the top.
+  const onHome = usePathname() === "/";
   const [past, setPast] = useState(false);
 
   useEffect(() => {
@@ -56,10 +61,11 @@ export default function SiteHeader() {
     };
   }, [open]);
 
-  const solid = past || open;
+  const solid = !onHome || past || open;
   const linkTone = solid ? "nav-on-solid" : "nav-on-photo";
 
   const toTop = (e: React.MouseEvent) => {
+    if (!onHome) return; // a normal link home from other routes
     e.preventDefault();
     setOpen(false);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -77,9 +83,9 @@ export default function SiteHeader() {
           <ul className="flex items-center gap-8">
             {navLeft.map((link) => (
               <li key={link.href}>
-                <a href={link.href} className={`nav-link ${linkTone}`}>
+                <Link href={link.href} className={`nav-link ${linkTone}`}>
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -107,11 +113,11 @@ export default function SiteHeader() {
         </button>
 
         {/* ── Centre: the mark ──────────────────────────────────────────── */}
-        <a
-          href="#top"
+        <Link
+          href="/"
           onClick={toTop}
           className="shrink-0"
-          aria-label={`${company.name} — back to top`}
+          aria-label={onHome ? `${company.name} — back to top` : `${company.name} — home`}
         >
           <Image
             src="/images/brand/logo.png"
@@ -123,7 +129,7 @@ export default function SiteHeader() {
             // would not survive a dark photograph at legible contrast.
             className="h-8 w-auto brightness-0 invert md:h-10"
           />
-        </a>
+        </Link>
 
         {/* ── Right: two links + phone (desktop) / phone only (mobile) ──── */}
         <div className="flex flex-1 items-center justify-end gap-8">
@@ -131,9 +137,9 @@ export default function SiteHeader() {
             <ul className="flex items-center gap-8">
               {navRight.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className={`nav-link ${linkTone}`}>
+                  <Link href={link.href} className={`nav-link ${linkTone}`}>
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -163,13 +169,13 @@ export default function SiteHeader() {
             <ul className="grid">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <a
+                  <Link
                     href={link.href}
                     onClick={() => setOpen(false)}
                     className="t-display-md block border-b border-white/10 py-5 text-[clamp(2rem,9vw,2.75rem)]"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { addressLine, company, states } from "@/lib/company";
 import { communities } from "@/lib/communities";
@@ -54,9 +55,9 @@ export default function Footer() {
             <ul className="mt-4 grid gap-2.5 text-[0.9375rem]">
               {navLinks.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className="text-ink hover:text-brand">
+                  <Link href={link.href} className="text-ink hover:text-brand">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>
@@ -70,6 +71,9 @@ export default function Footer() {
                 </a>
               </li>
             </ul>
+            <Link href="/directory" className="btn btn-line mt-6">
+              Staff directory →
+            </Link>
           </div>
 
           <div>

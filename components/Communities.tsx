@@ -1,9 +1,11 @@
-import CommunityCard from "@/components/CommunityCard";
+import CommunitiesCarousel from "@/components/CommunitiesCarousel";
 import SectionHeading from "@/components/SectionHeading";
-import { communities, markets } from "@/lib/communities";
+import { markets } from "@/lib/communities";
 
 /**
- * THE COMMUNITIES — all eight, with the client's own photography.
+ * THE COMMUNITIES — all eight, with the client's own photography, in an
+ * auto-advancing carousel (see components/CommunitiesCarousel.tsx for the
+ * mechanics and the anti-fabrication note on what's overlaid on each card).
  *
  * The client's live site renders this list from an Apartments247 API at
  * runtime, which means it is invisible to crawlers and blank without
@@ -11,7 +13,9 @@ import { communities, markets } from "@/lib/communities";
  * and server-rendered, so the communities are in the HTML.
  *
  * `markets` is derived from the list rather than typed out, so it cannot
- * disagree with the cards beneath it.
+ * disagree with the carousel beneath it. The carousel itself is edge-to-edge
+ * (outside `.shell`) so its peek cards can bleed to the viewport edge; the
+ * heading above and the controls below stay on the page grid.
  */
 export default function Communities() {
   return (
@@ -35,12 +39,10 @@ export default function Communities() {
             ))}
           </ul>
         </div>
+      </div>
 
-        <div className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {communities.map((c) => (
-            <CommunityCard key={c.slug} community={c} />
-          ))}
-        </div>
+      <div className="mt-14">
+        <CommunitiesCarousel />
       </div>
     </section>
   );

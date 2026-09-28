@@ -9,6 +9,15 @@
  * "market research, site selection and acquisition, planning and zoning
  * issues, project design, financing, construction and property management"
  * is the Development list, split into its parts. Nothing is added.
+ *
+ * `photo` / `photoAlt` — NOT STOCK. The client publishes no dedicated
+ * staff or job-site photography, so inventing a generic "workers on a site"
+ * image would be exactly the fabricated-imagery problem the build rules
+ * forbid. Each photo is instead one of the client's own real community hero
+ * shots (see lib/communities.ts for the SOURCE note on the photographs
+ * themselves), reused here to represent the division visually. `photoAlt`
+ * names the specific community in every case, so nothing is presented as a
+ * generic or staged image of "construction" or "management" in general.
  */
 
 export type Service = {
@@ -18,6 +27,8 @@ export type Service = {
   lede: string;
   body: string[];
   capabilities: string[];
+  photo: string;
+  photoAlt: string;
 };
 
 export const services: Service[] = [
@@ -39,6 +50,8 @@ export const services: Service[] = [
       "Construction",
       "Property management",
     ],
+    photo: "/images/communities/milestone-at-mission-ridge-hero.jpg",
+    photoAlt: "Milestone at Mission Ridge, a Bohannon community in El Paso",
   },
   {
     id: "construction",
@@ -57,6 +70,8 @@ export const services: Service[] = [
       "Quality control",
       "Project analysis",
     ],
+    photo: "/images/communities/ridgeline-west-hero.jpg",
+    photoAlt: "Ridgeline West, a Bohannon community in El Paso",
   },
   {
     id: "property-management",
@@ -75,5 +90,7 @@ export const services: Service[] = [
       "Financial management",
       "Management reporting",
     ],
+    photo: "/images/communities/fox-bridge-north-hero.jpg",
+    photoAlt: "Fox Bridge North, a Bohannon community near Houston",
   },
 ];

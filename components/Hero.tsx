@@ -123,15 +123,6 @@ export default function Hero() {
             management firm — founded in {company.founded} by {company.founder},
             and still run by the family that started it.
           </p>
-
-          <div className="mt-9 flex flex-wrap items-center gap-3">
-            <a href="#communities" className="btn btn-brand">
-              See our communities
-            </a>
-            <a href={company.phoneHref} className="btn btn-line-light">
-              Call {company.phone}
-            </a>
-          </div>
         </div>
 
         {/* Caption + frame indicators. The caption is load-bearing: it names

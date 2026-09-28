@@ -14,6 +14,9 @@
  *     real; those are a different thing and must not be copied up to here.
  *   - `generalEmail`: the site lists individual staff addresses only (see
  *     lib/leadership.ts) and no general inbox.
+ *   - `inquiryEmail`: where the contact form's quote/inquiry messages go.
+ *     The client has not chosen an inbox (there is no general one), so the
+ *     form stays unconnected until they do — see components/ContactForm.tsx.
  *   - `careersFormHref`: the live site links a Texas Apartment Association
  *     PDF employment application. The PDF is not mirrored into this repo, so
  *     the link points back at the client's own copy.
@@ -48,6 +51,14 @@ export const company = {
 
   /** ❌ No general inbox published — only the staff directory. */
   generalEmail: null as string | null,
+
+  /**
+   * ❌ Not chosen yet. The address the contact form's inquiries are sent to.
+   * Set this (or swap the form to a form service) once the client picks an
+   * inbox. Do not guess one from the staff directory.
+   */
+  inquiryEmail: null as string | null,
+  inquiryEmailNote: "[INQUIRY INBOX — TO BE CONFIRMED]",
 
   /** The client's own employment application, hosted on their site. */
   careersFormHref:

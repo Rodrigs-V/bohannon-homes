@@ -378,6 +378,38 @@ body {
 }
 
 /*
+ * ── Split band (Who we are + The portfolio) ──────────────────────────────
+ * From lg up, the section background is split exactly at 50% of the
+ * viewport — white left, night right. The content sits in a centred .shell
+ * with two equal columns, so the column boundary lands on the viewport's
+ * centre line too and the divide is a single clean vertical edge. Below lg
+ * the right column paints its own night ground and bleeds out through the
+ * shell's gutters (same clamp as .shell), so the stacked halves both run
+ * edge to edge.
+ */
+.split-band {
+  --split-gutter: clamp(1.25rem, 5vw, 4.5rem);
+  background: var(--color-surface);
+}
+
+.split-band-dark {
+  background: var(--color-night);
+  margin-inline: calc(var(--split-gutter) * -1);
+  padding-inline: var(--split-gutter);
+}
+
+@media (min-width: 64rem) {
+  .split-band {
+    background: linear-gradient(90deg, var(--color-surface) 50%, var(--color-night) 50%);
+  }
+  .split-band-dark {
+    background: transparent;
+    margin-inline: 0;
+    padding-inline-end: 0;
+  }
+}
+
+/*
  * Unverified-content marker. Any fact the client does not publish renders
  * through this, never as invented copy. Find every one of them with:
  *   grep -rn "TO BE CONFIRMED\|PLACEHOLDER\|unconfirmed" app components lib
@@ -397,6 +429,209 @@ body {
   border-color: rgb(255 255 255 / 0.28);
   background: rgb(255 255 255 / 0.06);
   color: var(--color-ink-inverse-muted);
+}
+
+/*
+ * ── Communities carousel ─────────────────────────────────────────────────
+ * Timings and proportions measured off Bozzuto's "Welcome Home" carousel
+ * (bozzuto.com, 2026-09-27): a 700ms track slide on cubic-bezier(.4,0,.2,1);
+ * slides that touch, with every non-active card drawn at 90% so the
+ * shrink itself opens the air between them; the active card growing to
+ * full size as it settles; a dark scrim + blur and the caption
+ * cross-fading in over 400ms. The track moves by `transform` (set inline by
+ * the component). `data-instant` switches all motion off for the invisible
+ * loop-correction jump and on first paint.
+ */
+.communities-viewport {
+  --cc-slide: 700ms;
+  --cc-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.communities-track {
+  --slide-w: 84vw;
+  --card-h: 105vw;
+  display: flex;
+  width: max-content;
+  transition: transform var(--cc-slide) var(--cc-ease);
+  will-change: transform;
+}
+
+.communities-slide {
+  flex: 0 0 var(--slide-w);
+}
+
+@media (min-width: 40rem) {
+  .communities-track {
+    --slide-w: 76vw;
+    --card-h: 60vw;
+  }
+}
+
+@media (min-width: 62rem) {
+  .communities-track {
+    --slide-w: min(63rem, 64vw);
+    --card-h: min(43vw, 38.75rem);
+  }
+}
+
+.communities-viewport[data-instant="true"] .communities-track,
+.communities-viewport[data-instant="true"] .communities-track * {
+  transition: none !important;
+}
+
+.communities-card {
+  height: var(--card-h);
+  border-radius: 1rem;
+  transform: scale(0.9);
+  transition: transform 950ms var(--cc-ease);
+}
+
+.communities-card[data-active="true"] {
+  transform: scale(1);
+  z-index: 2;
+}
+
+/* The active photo is blurred directly (a backdrop-filter on the scrim is
+   what the reference uses, but it doesn't render inside this transformed
+   track). Scaled up slightly so the blur never shows a soft edge. Same
+   function list in both states so the browser interpolates it. */
+.communities-photo {
+  filter: blur(0px);
+  transform: scale(1);
+  transition:
+    filter 400ms ease-in-out,
+    transform 300ms ease;
+}
+
+.communities-card[data-active="true"] .communities-photo {
+  filter: blur(6px);
+  transform: scale(1.06);
+}
+
+.communities-slide:hover .communities-card:not([data-active="true"]) .communities-photo {
+  transform: scale(1.03);
+}
+
+/* Scrim: a flat 40% wash plus a deeper foot — only on the active card. */
+.communities-scrim {
+  opacity: 0;
+  background:
+    linear-gradient(0deg, rgba(20, 17, 14, 0.45) 0%, rgba(20, 17, 14, 0) 22%),
+    rgba(20, 17, 14, 0.4);
+  transition: opacity 400ms ease-in-out;
+}
+
+.communities-card[data-active="true"] .communities-scrim {
+  opacity: 1;
+}
+
+.communities-overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 400ms ease-in-out;
+}
+
+.communities-card[data-active="true"] .communities-overlay {
+  opacity: 1;
+  transition-delay: 120ms;
+}
+
+/* Progress fill: keyed in fresh on every move, so it restarts at 0%; its
+   animationend is what advances the carousel. `is-paused` freezes it (and
+   therefore the timer) in place. */
+.communities-progress-fill {
+  animation: communities-progress 7s linear forwards;
+}
+
+.communities-progress-fill.is-paused {
+  animation-play-state: paused;
+}
+
+@keyframes communities-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .communities-progress-fill {
+    animation: none;
+    width: 0%;
+  }
+}
+
+/*
+ * ── "What we do" vertical accordion ──────────────────────────────────────
+ * Three full-width photographs stacked in a fixed-height grid. Hovering,
+ * focusing, or tapping one division grows its row and reveals its
+ * description and capability list; the other two compress to a title
+ * strip. The container height never changes — rows only trade space — so
+ * the page below doesn't shift. `--services-rows` is set inline from React.
+ */
+.services-grid {
+  display: grid;
+  grid-template-rows: var(--services-rows, 1fr 1fr 1fr);
+  gap: 0.375rem;
+  height: clamp(30rem, 120vw, 36rem);
+  transition: grid-template-rows 650ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (min-width: 48rem) {
+  .services-grid {
+    height: clamp(32rem, 52vw, 42rem);
+  }
+}
+
+.services-card img {
+  transition:
+    transform 800ms cubic-bezier(0.2, 0, 0.2, 1),
+    filter 500ms ease;
+}
+
+.services-card[data-active="true"] img {
+  transform: scale(1.03);
+}
+
+.services-card[data-active="false"] img {
+  filter: brightness(0.68) saturate(0.9);
+}
+
+/* Collapses to zero height when inactive (0fr → 1fr row trick) so the
+   title strip stays pinned to the bottom of a short collapsed row. */
+.services-detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 650ms cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 250ms ease;
+}
+
+.services-detail > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.services-card[data-active="true"] .services-detail {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows 650ms cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 450ms ease 250ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services-grid,
+  .services-card img,
+  .services-detail {
+    transition: none;
+  }
 }
 
 /* Anchored sections clear the fixed bar. */
